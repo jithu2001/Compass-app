@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: compass-db
+    restart: always
+    environment:
+      POSTGRES_USER: compass_user
+      POSTGRES_PASSWORD: compass_password
+      POSTGRES_DB: compass_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U compass_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: compass-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: compass_user
+      DB_PASSWORD: compass_password
+      DB_NAME: compass_db
+      JWT_SECRET: your-super-secret-jwt-key-change-this-in-production
+      JWT_ACCESS_TOKEN_EXPIRY: 15m
+      JWT_REFRESH_TOKEN_EXPIRY: 7d
+      SERVER_PORT: 8080
+      SERVER_MODE: release
+      ADMIN_EMAIL: admin@compass.com
+      ADMIN_PASSWORD: AdminPassword123!
+      ADMIN_NAME: System Administrator
+    volumes:
+      - ./uploads:/app/uploads
+
+volumes:
+  postgres_data:
