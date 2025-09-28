@@ -17,9 +17,9 @@ type ProjectSpecification struct {
 	GValue          *float64  `gorm:"type:decimal(5,2)" json:"g_value"`
 	Vents           string    `gorm:"size:100" json:"vents"`
 	Acoustics       string    `gorm:"size:100" json:"acoustics"`
-	SBD             bool      `json:"sbd"`
-	PAS24           bool      `json:"pas24"`
-	Restrictors     bool      `json:"restrictors"`
+	SBD             string    `gorm:"size:100" json:"sbd"`
+	PAS24           string    `gorm:"size:100" json:"pas24"`
+	Restrictors     string    `gorm:"size:100" json:"restrictors"`
 	SpecialComments string    `gorm:"type:text" json:"special_comments"`
 	AttachmentURL   string    `gorm:"type:text" json:"attachment_url"`
 	CreatedBy       uint64    `gorm:"not null" json:"created_by"`

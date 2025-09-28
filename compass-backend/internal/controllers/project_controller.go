@@ -6,6 +6,7 @@ import (
 
 	"compass-backend/internal/models"
 	"compass-backend/internal/services"
+	"compass-backend/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -82,9 +83,9 @@ func (c *ProjectController) CreateProject(ctx *gin.Context) {
 			GValue:          specReq.GValue,
 			Vents:           specReq.Vents,
 			Acoustics:       specReq.Acoustics,
-			SBD:             specReq.SBD,
-			PAS24:           specReq.PAS24,
-			Restrictors:     specReq.Restrictors,
+			SBD:             utils.BoolToString(specReq.SBD),
+			PAS24:           utils.BoolToString(specReq.PAS24),
+			Restrictors:     utils.BoolToString(specReq.Restrictors),
 			SpecialComments: specReq.SpecialComments,
 			AttachmentURL:   specReq.AttachmentURL,
 			CreatedBy:       createdByID,
