@@ -6,7 +6,6 @@ import (
 
 	"compass-backend/internal/models"
 	"compass-backend/internal/services"
-	"compass-backend/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,9 +27,9 @@ type CreateSpecificationRequest struct {
 	GValue          *float64 `json:"g_value"`
 	Vents           string   `json:"vents"`
 	Acoustics       string   `json:"acoustics"`
-	SBD             bool     `json:"sbd"`
-	PAS24           bool     `json:"pas24"`
-	Restrictors     bool     `json:"restrictors"`
+	SBD             string   `json:"sbd"`
+	PAS24           string   `json:"pas24"`
+	Restrictors     string   `json:"restrictors"`
 	SpecialComments string   `json:"special_comments"`
 	AttachmentURL   string   `json:"attachment_url"`
 }
@@ -61,9 +60,9 @@ func (c *SpecificationController) CreateSpecification(ctx *gin.Context) {
 		GValue:          req.GValue,
 		Vents:           req.Vents,
 		Acoustics:       req.Acoustics,
-		SBD:             utils.BoolToString(req.SBD),
-		PAS24:           utils.BoolToString(req.PAS24),
-		Restrictors:     utils.BoolToString(req.Restrictors),
+		SBD:             req.SBD,
+		PAS24:           req.PAS24,
+		Restrictors:     req.Restrictors,
 		SpecialComments: req.SpecialComments,
 		AttachmentURL:   req.AttachmentURL,
 		CreatedBy:       createdByID,
