@@ -27,7 +27,16 @@ func (r *projectRepository) Create(project *models.Project) error {
 
 func (r *projectRepository) FindByID(id uint64) (*models.Project, error) {
 	var project models.Project
-	err := r.db.Preload("Creator").Preload("LastUpdater").First(&project, id).Error
+	err := r.db.
+		Preload("Creator").
+		Preload("LastUpdater").
+		Preload("RFIs.Answerer").
+		Preload("Specifications", func(db *gorm.DB) *gorm.DB {
+			// Get only the latest specification by ordering by version_no desc and limiting to 1
+			return db.Order("version_no DESC").Limit(1)
+		}).
+		Preload("Specifications.Creator").
+		First(&project, id).Error
 	if err != nil {
 		return nil, err
 	}
