@@ -43,14 +43,9 @@ func (s *rfiService) AnswerRFI(rfiID uint64, answer models.AnswerValue, answered
 	}
 
 	// Check if RFI exists
-	rfi, err := s.rfiRepo.FindByID(rfiID)
+	_, err := s.rfiRepo.FindByID(rfiID)
 	if err != nil {
 		return errors.New("RFI not found")
-	}
-
-	// Check if already answered
-	if rfi.AnswerValue != nil {
-		return errors.New("RFI already answered")
 	}
 
 	return s.rfiRepo.Answer(rfiID, answer, answeredBy)

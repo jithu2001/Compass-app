@@ -23,7 +23,9 @@ func Init(cfg *config.Config) error {
 		cfg.Database.Port,
 	)
 
-	gormConfig := &gorm.Config{}
+	gormConfig := &gorm.Config{
+		DisableForeignKeyConstraintWhenMigrating: true,
+	}
 	if cfg.Server.Mode == "debug" {
 		gormConfig.Logger = logger.Default.LogMode(logger.Info)
 	}

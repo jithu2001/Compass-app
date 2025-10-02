@@ -9,7 +9,7 @@ import (
 type ProjectSpecification struct {
 	SpecificationID uint64    `gorm:"primaryKey;autoIncrement" json:"specification_id"`
 	ProjectID       uint64    `gorm:"not null;uniqueIndex:idx_project_version" json:"project_id"`
-	Project         *Project  `gorm:"foreignKey:ProjectID" json:"project,omitempty"`
+	Project         *Project  `gorm:"foreignKey:ProjectID;references:ProjectID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"project,omitempty"`
 	VersionNo       int       `gorm:"not null;uniqueIndex:idx_project_version" json:"version_no"`
 	Colour          string    `gorm:"size:100" json:"colour"`
 	Ironmongery     string    `gorm:"size:150" json:"ironmongery"`

@@ -29,8 +29,8 @@ type Project struct {
 	Creator        *User                   `gorm:"foreignKey:CreatedBy" json:"creator,omitempty"`
 	LastUpdatedBy  *uint64                 `json:"last_updated_by,omitempty"`
 	LastUpdater    *User                   `gorm:"foreignKey:LastUpdatedBy" json:"last_updater,omitempty"`
-	Specifications []ProjectSpecification  `gorm:"foreignKey:ProjectID" json:"specifications,omitempty"`
-	RFIs           []ProjectRFI            `gorm:"foreignKey:ProjectID" json:"rfis,omitempty"`
+	Specifications []ProjectSpecification  `gorm:"foreignKey:ProjectID;references:ProjectID" json:"specifications,omitempty"`
+	RFIs           []ProjectRFI            `gorm:"foreignKey:ProjectID;references:ProjectID" json:"rfis,omitempty"`
 	CreatedAt      time.Time               `json:"created_at"`
 	UpdatedAt      time.Time               `json:"updated_at"`
 }
