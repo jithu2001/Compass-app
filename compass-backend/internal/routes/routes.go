@@ -46,13 +46,17 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB, cfg *config.Config) {
 		// Logout
 		api.POST("/auth/logout", authController.Logout)
 
-		// User management (Admin only)
+		// User routes
 		users := api.Group("/users")
-		users.Use(middleware.AdminOnly())
 		{
-			users.POST("", userController.CreateUser)
-			users.PATCH("/:id/status", userController.UpdateUserStatus)
-			users.GET("", userController.ListUsers)
+			// Change password (authenticated users) - must be before /:id routes
+			users.PATCH("/change-password", userController.ChangePassword)
+
+			// Admin only routes
+			users.POST("", middleware.AdminOnly(), userController.CreateUser)
+			users.PATCH("/:id/status", middleware.AdminOnly(), userController.UpdateUserStatus)
+			users.PATCH("/:id/reset-password", middleware.AdminOnly(), userController.ResetPassword)
+			users.GET("", middleware.AdminOnly(), userController.ListUsers)
 		}
 
 		// Projects

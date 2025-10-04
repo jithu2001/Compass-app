@@ -10,6 +10,7 @@ type UserRepository interface {
 	FindByID(id uint64) (*models.User, error)
 	FindByEmail(email string) (*models.User, error)
 	UpdateStatus(id uint64, status models.AccountStatus) error
+	UpdatePassword(id uint64, hashedPassword string) error
 	List() ([]models.User, error)
 }
 
@@ -45,6 +46,10 @@ func (r *userRepository) FindByEmail(email string) (*models.User, error) {
 
 func (r *userRepository) UpdateStatus(id uint64, status models.AccountStatus) error {
 	return r.db.Model(&models.User{}).Where("user_id = ?", id).Update("account_status", status).Error
+}
+
+func (r *userRepository) UpdatePassword(id uint64, hashedPassword string) error {
+	return r.db.Model(&models.User{}).Where("user_id = ?", id).Update("password_hash", hashedPassword).Error
 }
 
 func (r *userRepository) List() ([]models.User, error) {

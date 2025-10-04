@@ -31,6 +31,16 @@ type UpdateUserStatusRequest struct {
 	Status models.AccountStatus `json:"status" binding:"required,oneof=pending active disabled"`
 }
 
+type ChangePasswordRequest struct {
+	CurrentPassword string `json:"current_password" binding:"required"`
+	NewPassword     string `json:"new_password" binding:"required,min=8"`
+	ConfirmPassword string `json:"confirm_password" binding:"required"`
+}
+
+type ResetPasswordRequest struct {
+	NewPassword string `json:"new_password" binding:"required,min=8"`
+}
+
 func (c *UserController) CreateUser(ctx *gin.Context) {
 	var req CreateUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -97,4 +107,53 @@ func (c *UserController) ListUsers(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"users": users})
+}
+
+func (c *UserController) ChangePassword(ctx *gin.Context) {
+	var req ChangePasswordRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Validate that new password and confirm password match
+	if req.NewPassword != req.ConfirmPassword {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "New password and confirm password do not match"})
+		return
+	}
+
+	// Get user ID from context
+	userID, _ := ctx.Get("user_id")
+	userIDValue := userID.(uint64)
+
+	err := c.userService.ChangePassword(userIDValue, req.CurrentPassword, req.NewPassword)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Password changed successfully"})
+}
+
+func (c *UserController) ResetPassword(ctx *gin.Context) {
+	userIDStr := ctx.Param("id")
+	userID, err := strconv.ParseUint(userIDStr, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	var req ResetPasswordRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = c.userService.ResetPassword(userID, req.NewPassword)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Password reset successfully"})
 }

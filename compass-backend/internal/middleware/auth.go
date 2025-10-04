@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"compass-backend/config"
+	"compass-backend/internal/models"
 	"compass-backend/internal/utils"
 
 	"github.com/gin-gonic/gin"
@@ -52,7 +53,8 @@ func AdminOnly() gin.HandlerFunc {
 			return
 		}
 
-		if role != "admin" {
+		userRole, ok := role.(models.UserRole)
+		if !ok || userRole != models.RoleAdmin {
 			c.JSON(http.StatusForbidden, gin.H{"error": "Admin access required"})
 			c.Abort()
 			return
