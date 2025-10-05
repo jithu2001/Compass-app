@@ -42,9 +42,11 @@ func (c *RFIController) CreateRFI(ctx *gin.Context) {
 		return
 	}
 
+	defaultAnswer := models.AnswerNo
 	rfi := &models.ProjectRFI{
 		ProjectID:    projectID,
 		QuestionText: req.QuestionText,
+		AnswerValue:  &defaultAnswer,
 	}
 
 	err = c.rfiService.CreateRFI(rfi)

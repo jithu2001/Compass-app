@@ -108,7 +108,7 @@ sudo nano /etc/postgresql/14/main/postgresql.conf
 # Find and uncomment: listen_addresses = 'localhost'
 
 # Edit pg_hba.conf
-sudo nano /etc/postgresql/14/main/pg_hba.conf
+sudo nano /etc/postgresql/16/main/pg_hba.conf
 # Add line: host    compass_db    compass_user    127.0.0.1/32    md5
 
 # Restart PostgreSQL
@@ -139,7 +139,7 @@ git clone https://<YOUR_TOKEN>@github.com/yourusername/Compass-backend.git
 
 ### 7.1 Navigate to Project Directory
 ```bash
-cd ~/Compass-backend/compass-backend
+  cd ~/Compass-backend/compass-backend
 ```
 
 ### 7.2 Create Production Config
@@ -206,8 +206,8 @@ Wants=postgresql.service
 [Service]
 Type=simple
 User=ubuntu
-WorkingDirectory=/home/ubuntu/Compass-backend/compass-backend
-ExecStart=/home/ubuntu/Compass-backend/compass-backend/compass-backend
+WorkingDirectory=/home/ubuntu/Compass-app/compass-backend
+ExecStart=/home/ubuntu/Compass-app/compass-backend/compass-backend
 Restart=on-failure
 RestartSec=10
 StandardOutput=append:/var/log/compass-backend/output.log
@@ -428,7 +428,7 @@ sudo journalctl -u compass-backend -n 50 --no-pager
 sudo lsof -i :8080
 
 # Check permissions
-ls -la /home/ubuntu/Compass-backend/compass-backend/compass-backend
+ls -la /home/ubuntu/Compass-app/compass-backend/compass-backend
 ```
 
 ### Database connection issues

@@ -21,17 +21,26 @@ func NewSpecificationController(specService services.SpecificationService) *Spec
 }
 
 type CreateSpecificationRequest struct {
-	Colour          string   `json:"colour"`
-	Ironmongery     string   `json:"ironmongery"`
-	UValue          *float64 `json:"u_value"`
-	GValue          *float64 `json:"g_value"`
-	Vents           string   `json:"vents"`
-	Acoustics       string   `json:"acoustics"`
-	SBD             string   `json:"sbd"`
-	PAS24           string   `json:"pas24"`
-	Restrictors     string   `json:"restrictors"`
-	SpecialComments string   `json:"special_comments"`
-	AttachmentURL   string   `json:"attachment_url"`
+	Colour                string  `json:"colour"`
+	ColourAttachment      *string `json:"colour_attachment"`
+	Ironmongery           string  `json:"ironmongery"`
+	IronmongeryAttachment *string `json:"ironmongery_attachment"`
+	UValue                *string `json:"u_value"`
+	UValueAttachment      *string `json:"u_value_attachment"`
+	GValue                *string `json:"g_value"`
+	GValueAttachment      *string `json:"g_value_attachment"`
+	Vents                 string  `json:"vents"`
+	VentsAttachment       *string `json:"vents_attachment"`
+	Acoustics             string  `json:"acoustics"`
+	AcousticsAttachment   *string `json:"acoustics_attachment"`
+	SBD                   string  `json:"sbd"`
+	SBDAttachment         *string `json:"sbd_attachment"`
+	PAS24                 string  `json:"pas24"`
+	PAS24Attachment       *string `json:"pas24_attachment"`
+	Restrictors           string  `json:"restrictors"`
+	RestrictorsAttachment *string `json:"restrictors_attachment"`
+	SpecialComments       string  `json:"special_comments"`
+	AttachmentURL         string  `json:"attachment_url"`
 }
 
 func (c *SpecificationController) CreateSpecification(ctx *gin.Context) {
@@ -53,19 +62,28 @@ func (c *SpecificationController) CreateSpecification(ctx *gin.Context) {
 	createdByID := createdBy.(uint64)
 
 	spec := &models.ProjectSpecification{
-		ProjectID:       projectID,
-		Colour:          req.Colour,
-		Ironmongery:     req.Ironmongery,
-		UValue:          req.UValue,
-		GValue:          req.GValue,
-		Vents:           req.Vents,
-		Acoustics:       req.Acoustics,
-		SBD:             req.SBD,
-		PAS24:           req.PAS24,
-		Restrictors:     req.Restrictors,
-		SpecialComments: req.SpecialComments,
-		AttachmentURL:   req.AttachmentURL,
-		CreatedBy:       createdByID,
+		ProjectID:             projectID,
+		Colour:                req.Colour,
+		ColourAttachment:      req.ColourAttachment,
+		Ironmongery:           req.Ironmongery,
+		IronmongeryAttachment: req.IronmongeryAttachment,
+		UValue:                req.UValue,
+		UValueAttachment:      req.UValueAttachment,
+		GValue:                req.GValue,
+		GValueAttachment:      req.GValueAttachment,
+		Vents:                 req.Vents,
+		VentsAttachment:       req.VentsAttachment,
+		Acoustics:             req.Acoustics,
+		AcousticsAttachment:   req.AcousticsAttachment,
+		SBD:                   req.SBD,
+		SBDAttachment:         req.SBDAttachment,
+		PAS24:                 req.PAS24,
+		PAS24Attachment:       req.PAS24Attachment,
+		Restrictors:           req.Restrictors,
+		RestrictorsAttachment: req.RestrictorsAttachment,
+		SpecialComments:       req.SpecialComments,
+		AttachmentURL:         req.AttachmentURL,
+		CreatedBy:             createdByID,
 	}
 
 	err = c.specService.CreateSpecification(spec)

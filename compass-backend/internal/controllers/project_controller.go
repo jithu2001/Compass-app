@@ -30,18 +30,27 @@ type CreateProjectRequest struct {
 }
 
 type ProjectSpecificationRequest struct {
-	VersionNo       int      `json:"version_no" binding:"required"`
-	Colour          string   `json:"colour"`
-	Ironmongery     string   `json:"ironmongery"`
-	UValue          *float64 `json:"u_value"`
-	GValue          *float64 `json:"g_value"`
-	Vents           string   `json:"vents"`
-	Acoustics       string   `json:"acoustics"`
-	SBD             string   `json:"sbd"`
-	PAS24           string   `json:"pas24"`
-	Restrictors     string   `json:"restrictors"`
-	SpecialComments string   `json:"special_comments"`
-	AttachmentURL   string   `json:"attachment_url"`
+	VersionNo             int     `json:"version_no" binding:"required"`
+	Colour                string  `json:"colour"`
+	ColourAttachment      *string `json:"colour_attachment"`
+	Ironmongery           string  `json:"ironmongery"`
+	IronmongeryAttachment *string `json:"ironmongery_attachment"`
+	UValue                *string `json:"u_value"`
+	UValueAttachment      *string `json:"u_value_attachment"`
+	GValue                *string `json:"g_value"`
+	GValueAttachment      *string `json:"g_value_attachment"`
+	Vents                 string  `json:"vents"`
+	VentsAttachment       *string `json:"vents_attachment"`
+	Acoustics             string  `json:"acoustics"`
+	AcousticsAttachment   *string `json:"acoustics_attachment"`
+	SBD                   string  `json:"sbd"`
+	SBDAttachment         *string `json:"sbd_attachment"`
+	PAS24                 string  `json:"pas24"`
+	PAS24Attachment       *string `json:"pas24_attachment"`
+	Restrictors           string  `json:"restrictors"`
+	RestrictorsAttachment *string `json:"restrictors_attachment"`
+	SpecialComments       string  `json:"special_comments"`
+	AttachmentURL         string  `json:"attachment_url"`
 }
 
 type ProjectRFIRequest struct {
@@ -75,19 +84,28 @@ func (c *ProjectController) CreateProject(ctx *gin.Context) {
 	var specifications []models.ProjectSpecification
 	for _, specReq := range req.Specifications {
 		spec := models.ProjectSpecification{
-			VersionNo:       specReq.VersionNo,
-			Colour:          specReq.Colour,
-			Ironmongery:     specReq.Ironmongery,
-			UValue:          specReq.UValue,
-			GValue:          specReq.GValue,
-			Vents:           specReq.Vents,
-			Acoustics:       specReq.Acoustics,
-			SBD:             specReq.SBD,
-			PAS24:           specReq.PAS24,
-			Restrictors:     specReq.Restrictors,
-			SpecialComments: specReq.SpecialComments,
-			AttachmentURL:   specReq.AttachmentURL,
-			CreatedBy:       createdByID,
+			VersionNo:             specReq.VersionNo,
+			Colour:                specReq.Colour,
+			ColourAttachment:      specReq.ColourAttachment,
+			Ironmongery:           specReq.Ironmongery,
+			IronmongeryAttachment: specReq.IronmongeryAttachment,
+			UValue:                specReq.UValue,
+			UValueAttachment:      specReq.UValueAttachment,
+			GValue:                specReq.GValue,
+			GValueAttachment:      specReq.GValueAttachment,
+			Vents:                 specReq.Vents,
+			VentsAttachment:       specReq.VentsAttachment,
+			Acoustics:             specReq.Acoustics,
+			AcousticsAttachment:   specReq.AcousticsAttachment,
+			SBD:                   specReq.SBD,
+			SBDAttachment:         specReq.SBDAttachment,
+			PAS24:                 specReq.PAS24,
+			PAS24Attachment:       specReq.PAS24Attachment,
+			Restrictors:           specReq.Restrictors,
+			RestrictorsAttachment: specReq.RestrictorsAttachment,
+			SpecialComments:       specReq.SpecialComments,
+			AttachmentURL:         specReq.AttachmentURL,
+			CreatedBy:             createdByID,
 		}
 		specifications = append(specifications, spec)
 	}
