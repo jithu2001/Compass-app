@@ -1,12 +1,17 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
+	"path/filepath"
 
 	"compass-backend/config"
-	"compass-backend/internal/models"
 
+	"github.com/golang-migrate/migrate/v4"
+	migrationpostgres "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -23,42 +28,72 @@ func Init(cfg *config.Config) error {
 		cfg.Database.Port,
 	)
 
-	gormConfig := &gorm.Config{
-		DisableForeignKeyConstraintWhenMigrating: true,
+	// Run migrations first
+	err := runMigrations(cfg)
+	if err != nil {
+		return fmt.Errorf("failed to run migrations: %w", err)
 	}
+
+	gormConfig := &gorm.Config{}
 	if cfg.Server.Mode == "debug" {
 		gormConfig.Logger = logger.Default.LogMode(logger.Info)
 	}
 
-	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), gormConfig)
 	if err != nil {
 		return fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	// Auto-migrate models in correct order
-	// First migrate User since it has no dependencies
-	err = DB.AutoMigrate(&models.User{})
-	if err != nil {
-		return fmt.Errorf("failed to migrate User model: %w", err)
-	}
-	
-	// Then migrate Project which depends on User
-	err = DB.AutoMigrate(&models.Project{})
-	if err != nil {
-		return fmt.Errorf("failed to migrate Project model: %w", err)
-	}
-	
-	// Finally migrate dependent models
-	err = DB.AutoMigrate(
-		&models.ProjectSpecification{},
-		&models.ProjectRFI{},
+	log.Println("Database connection established and migrations completed")
+	return nil
+}
+
+func runMigrations(cfg *config.Config) error {
+	// Create connection string for sql.DB
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		cfg.Database.User,
+		cfg.Database.Password,
+		cfg.Database.Host,
+		cfg.Database.Port,
+		cfg.Database.Name,
 	)
+
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		return fmt.Errorf("failed to migrate database: %w", err)
+		return fmt.Errorf("failed to open database: %w", err)
+	}
+	defer db.Close()
+
+	driver, err := migrationpostgres.WithInstance(db, &migrationpostgres.Config{
+		MigrationsTable: "schema_migrations",
+		SchemaName:      "public",
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create migration driver: %w", err)
 	}
 
-	log.Println("Database connection established and migrations completed")
+	// Get migrations path
+	migrationsPath, err := filepath.Abs("db/migrations")
+	if err != nil {
+		return fmt.Errorf("failed to get migrations path: %w", err)
+	}
+
+	m, err := migrate.NewWithDatabaseInstance(
+		fmt.Sprintf("file://%s", migrationsPath),
+		"postgres",
+		driver,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to create migrate instance: %w", err)
+	}
+
+	// Run migrations
+	err = m.Up()
+	if err != nil && err != migrate.ErrNoChange {
+		return fmt.Errorf("failed to run migrations: %w", err)
+	}
+
+	log.Println("Migrations applied successfully")
 	return nil
 }
 
